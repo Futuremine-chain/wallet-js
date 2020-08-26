@@ -51,8 +51,8 @@ function toOutputScript(address, network) {
 //生成地址
 function toAddress(buff, version) {
     let a;
-    if (version === 'testnet') a = Buffer.from([0x1f, 0x13]);
-    else if (version === 'mainnet') a = Buffer.from([0x1e, 0x12]);
+    if (version === 'testnet') a = Buffer.from([0x08, 0x51]);
+    else if (version === 'mainnet') a = Buffer.from([0x08, 0x15]);
 
     const b = hash.ripemd160(hash.sha256(buff));
 
