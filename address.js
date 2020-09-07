@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 const Buffer = require('safe-buffer').Buffer
-const Base58check = require('./base58check').default
+const qitmeer58check = require('./qitmeer58check').default
 const Network = require('./networks')
 const Script = require('./script')
 const types = require('./types')
@@ -16,10 +16,11 @@ module.exports = {
     toBase58Check: toBase58Check,
     toOutputScript: toOutputScript,
     toAddress: toAddress,
-}
+    toTokenAddress: toTokenAddress,
+};
 
 function fromBase58Check(address) {
-    const payload = Base58check.decode(address)
+    const payload = qitmeer58check.decode(address)
     if (payload.length < 22) throw new TypeError(address + ' is too short')
     if (payload.length > 22) throw new TypeError(address + ' is too long')
 
@@ -34,7 +35,7 @@ function toBase58Check(hash, version) {
     const payload = Buffer.allocUnsafe(22)
     payload.writeUInt16BE(version, 0)
     hash.copy(payload, 2)
-    return Base58check.encode(payload)
+    return qitmeer58check.encode(payload)
 }
 
 function toOutputScript(address, network) {
@@ -50,16 +51,64 @@ function toOutputScript(address, network) {
 
 //生成地址
 function toAddress(buff, version) {
-    let a;
-    if (version === 'testnet') a = Buffer.from([0x08, 0x51]);
-    else if (version === 'mainnet') a = Buffer.from([0x08, 0x15]);
+    let topHash;
+    if (version === 'testnet') topHash = Buffer.from([0x08, 0x51]);
+    else if (version === 'mainnet') topHash = Buffer.from([0x08, 0x15]);
 
-    const b = hash.ripemd160(hash.sha256(buff));
 
     const buf = Buffer.concat([
-        a,
+        topHash,
         hash.ripemd160(hash.sha256(buff))
     ]);
     const checkSum = hash.sha256((hash.sha256(buf))).slice(0, 4);
     return base58.encode(Buffer.concat([buf, checkSum]))
 }
+
+/**
+ * 生成token地址
+ * @param address           发币地址
+ * @param shorthand         币的简写
+ * @param network           网络
+ * @returns {string}
+ */
+function toTokenAddress(address, shorthand, network) {
+    let topHash;
+    if (network === 'testnet') topHash = Buffer.from([0x08, 0x62]);
+    else if (network === 'mainnet') topHash = Buffer.from([0x08, 0x24]);
+    console.log('生成token address');
+    let addrByte = base58.decode(address);
+    let shortByte = stringToBytes(shorthand);
+    let concatByte = [];
+    for (let i = 0, len = addrByte.length; i < len; i++) {
+        concatByte.push(addrByte[i]);
+    }
+    for (let i = 0, len = shortByte.length; i < len; i++) {
+        concatByte.push(shortByte[i]);
+    }
+
+    const buf = Buffer.concat([
+        topHash,
+        hash.ripemd160(hash.sha256(concatByte))
+    ]);
+    const checkSum = hash.sha256((hash.sha256(buf))).slice(0, 4);
+    return base58.encode(Buffer.concat([buf, checkSum]))
+}
+
+// JS字符串转Byte[]
+const stringToBytes = (str) => {
+    let ch, st, re = [];
+    for (let i = 0; i < str.length; i++) {
+        ch = str.charCodeAt(i);  // get char
+        st = [];                 // set up "stack"
+        do {
+            st.push(ch & 0xFF);  // push byte to stack
+            ch = ch >> 8;          // shift value down by 1 byte
+        }
+        while (ch);
+        // add stack contents to result
+        // done because chars have "wrong" endianness
+        re = re.concat(st.reverse());
+    }
+    // return an array of bytes
+    return re;
+};

@@ -2,7 +2,7 @@
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
-const Base58check = require('./base58check').Base58checkdsha256
+const qitmeer58check = require('./qitmeer58check').Qitmeer58checkdsha256
 const types = require('./types')
 
 function decodeRaw (buffer, version) {
@@ -48,11 +48,11 @@ function encodeRaw (privateKey, compressed, version) {
 
 function decode (string, version) {
     if (types.Nil(version)) version = 0x80
-    return decodeRaw(Base58check.decode(string), version)
+    return decodeRaw(qitmeer58check.decode(string), version)
 }
 
 function encode (privateKey, compressed, version) {
-    return Base58check.encode(encodeRaw(privateKey, compressed, version))
+    return qitmeer58check.encode(encodeRaw(privateKey, compressed, version))
 }
 
 module.exports = {
