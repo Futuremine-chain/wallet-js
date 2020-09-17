@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 const Buffer = require('safe-buffer').Buffer
-const qitmeer58check = require('./qitmeer58check').default
+const base58check = require('./base58check').default
 const Network = require('./networks')
 const Script = require('./script')
 const types = require('./types')
@@ -20,7 +20,7 @@ module.exports = {
 };
 
 function fromBase58Check(address) {
-    const payload = qitmeer58check.decode(address)
+    const payload = base58check.decode(address)
     if (payload.length < 22) throw new TypeError(address + ' is too short')
     if (payload.length > 22) throw new TypeError(address + ' is too long')
 
@@ -35,7 +35,7 @@ function toBase58Check(hash, version) {
     const payload = Buffer.allocUnsafe(22)
     payload.writeUInt16BE(version, 0)
     hash.copy(payload, 2)
-    return qitmeer58check.encode(payload)
+    return base58check.encode(payload)
 }
 
 function toOutputScript(address, network) {
