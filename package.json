@@ -1,5 +1,5 @@
 {
-  "name": "future-js",
+  "name": "futuremine-js",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "future"
+    "futuremine-js"
   ],
   "author": "gaozh",
   "license": "MIT",
