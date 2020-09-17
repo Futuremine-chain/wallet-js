@@ -2,10 +2,10 @@
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
-const base58check = require('./base58check').base58checkdsha256
+const base58check = require('./base58check');
 const types = require('./types')
 
-function decodeRaw (buffer, version) {
+function decodeRaw(buffer, version) {
     // check version only if defined
     if (version !== undefined && buffer[0] !== version) throw new Error('Invalid network version')
 
@@ -31,7 +31,7 @@ function decodeRaw (buffer, version) {
     }
 }
 
-function encodeRaw (privateKey, compressed, version) {
+function encodeRaw(privateKey, compressed, version) {
     var result = Buffer.alloc(compressed ? 34 : 33)
     if (types.Nil(version)) {
         version = 0x80
@@ -46,13 +46,13 @@ function encodeRaw (privateKey, compressed, version) {
     return result
 }
 
-function decode (string, version) {
+function decode(string, version) {
     if (types.Nil(version)) version = 0x80
-    return decodeRaw(base58check.decode(string), version)
+    return decodeRaw(base58check.Base58checkdsha256.decode(string), version)
 }
 
-function encode (privateKey, compressed, version) {
-    return base58check.encode(encodeRaw(privateKey, compressed, version))
+function encode(privateKey, compressed, version) {
+    return base58check.Base58checkdsha256.encode(encodeRaw(privateKey, compressed, version))
 }
 
 module.exports = {
