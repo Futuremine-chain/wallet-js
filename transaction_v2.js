@@ -1,8 +1,8 @@
-import hash from './hash';
-import ec from './ec';
-import address from './address';
-import signature from './signature';
-import tx from './transaction';
+const hash = require('./hash');
+const ec = require('./ec');
+const address = require('./address');
+const signature = require('./signature');
+const transaction = require('./transaction');
 
 const Buffer = require('safe-buffer').Buffer;
 
@@ -40,21 +40,21 @@ const toJson = (params) => {
 
     let json = {
         msgheader: {
-            msghash: params.msghash ?? '0x0000000000000000000000000000000000000000000000000000000000000000',
-            type: params.type ?? 0,//0:转账交易 , 1:token发布
+            msghash: params.msghash === undefined ? '0x0000000000000000000000000000000000000000000000000000000000000000' : params.msghash,
+            type: params.type === undefined ? 0 : params.type,//0:转账交易 , 1:token发布
             from: params.from,//我的地址
             nonce: params.nonce,
             fee: params.fee,//手续费
             time: params.time,
             signscript: {
-                signature: params.signature ?? '',
-                pubkey: params.pubkey ?? '',
+                signature: params.signature === undefined ? '' : params.signature,
+                pubkey: params.pubkey ? '' : params.pubkey,
             },
         },
     };
     if (params.type === 0) {
         json.msgbody = {
-            token: params.token ?? 'FM',
+            token: params.token ? 'FM' : params.token,
             to: params.to,
             amount: params.amount,
         };
@@ -67,7 +67,7 @@ const toJson = (params) => {
             name: params.name,                                  //token名称
             shorthand: params.shorthand,                        //token缩写
             amount: params.amount,                              //创建token个数
-            allowedincrease: params.allowedincrease ?? false,   //是否支持增发
+            allowedincrease: params.allowedincrease ? false : params.allowedincrease,   //是否支持增发
         };
     }
     return json
