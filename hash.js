@@ -12,7 +12,7 @@ function ripemd160(buffer) {
 }
 
 function sha256(buffer) {
-    return Buffer.from(createHash('sha256').update(buffer).digest())
+    return Buffer.from(createHash('sha256').update(Buffer.from(buffer)).digest())
 }
 
 function bitcoin160(buffer) {
